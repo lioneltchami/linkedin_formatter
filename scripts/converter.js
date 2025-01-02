@@ -76,3 +76,15 @@ document.getElementById('convertBtn').addEventListener('click', function () {
 
     document.getElementById('output').value = textOutput;
 });
+
+document.getElementById('copyBtn').addEventListener('click', function() {
+    const outputText = document.getElementById('output');
+    outputText.select();
+    document.execCommand('copy');
+
+    // Optional: Provide visual feedback
+    this.textContent = 'Copied!';
+    setTimeout(() => {
+        this.textContent = 'Copy';
+    }, 2000);
+});
