@@ -2,15 +2,18 @@ function toUnicodeVariant(str, variant) {
     // ... (keep the existing toUnicodeVariant function)
 }
 
-function convertToListOrText(text, attributes) {
-    if (attributes && attributes.list === 'bullet') {
-        return text.split('\n').map(line => line.trim() ? `• ${line}` : line).join('\n');
-    }
+function convertToListOrText(text) {
     return text.split('\n').map(line => {
         line = line.trim();
-        return line.startsWith('- ') ? `• ${line.slice(2)}` : line;
+        if (line.startsWith('- ')) {
+            return `• ${line.slice(2)}`;
+        } else if (line.startsWith('• ')) {
+            return line;
+        }
+        return line;
     }).join('\n');
 }
+
 
 document.getElementById('convertBtn').addEventListener('click', function () {
     const delta = quill.getContents();
