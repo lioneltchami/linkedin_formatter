@@ -1,105 +1,78 @@
-function toUnicodeVariant(str, variant) {
+function toUnicodeVariant(str, variant, flags) {
     const offsets = {
-        bold: [
-            '𝗔'.codePointAt(0) - 'A'.codePointAt(0),
-            '𝗮'.codePointAt(0) - 'a'.codePointAt(0),
-        ],
-        italic: [
-            '𝘈'.codePointAt(0) - 'A'.codePointAt(0),
-            '𝘢'.codePointAt(0) - 'a'.codePointAt(0),
-        ],
-        bolditalic: [
-            '𝘼'.codePointAt(0) - 'A'.codePointAt(0),
-            '𝙖'.codePointAt(0) - 'a'.codePointAt(0),
-        ]
+        'bold': [0x1D400, 0x1D41A],
+        'italic': [0x1D434, 0x1D44E],
+        'bolditalic': [0x1D468, 0x1D482],
+        'script': [0x1D49C, 0x1D4B6],
+        'boldscript': [0x1D4D0, 0x1D4EA],
+        'monospace': [0x1D670, 0x1D68A]
     };
 
-    const offset = offsets[variant];
-    if (!offset) return str;
+    const chars = str.split("");
 
-    return [...str].map(char => {
-        const code = char.charCodeAt(0);
-        if (code >= 65 && code <= 90) {
-            return String.fromCodePoint(code + offset[0]);
-        } else if (code >= 97 && code <= 122) {
-            return String.fromCodePoint(code + offset[1]);
+    let result = "";
+    for (let c of chars) {
+        let cp = c.codePointAt(0);
+        if (cp >= 0x41 && cp <= 0x5A) {
+            result += String.fromCodePoint(cp - 0x41 + offsets[variant][0]);
+        } else if (cp >= 0x61 && cp <= 0x7A) {
+            result += String.fromCodePoint(cp - 0x61 + offsets[variant][1]);
+        } else {
+            result += c;
         }
-        return char;
-    }).join('');
+    }
+
+    return result;
 }
 
-function formatText(text, attributes) {
-    if (!attributes) return text;
-
-    // Apply bold and italic formatting
-    if (attributes.bold && attributes.italic) {
-        text = toUnicodeVariant(text, 'bolditalic');
-    } else if (attributes.bold) {
-        text = toUnicodeVariant(text, 'bold');
-    } else if (attributes.italic) {
-        text = toUnicodeVariant(text, 'italic');
-    }
-
-    // Apply underline
-    if (attributes.underline) {
-        text = text.split('').join('̲') + '̲';
-    }
-
-    // Apply strikethrough
-    if (attributes.strike) {
-        text = text.split('').join('̶') + '̶';
-    }
-
-    return text;
-}
-
-function handleListItem(text, attributes) {
-    if (!text.trim()) return text;
-
-    if (attributes && attributes.list === 'bullet') {
-        return `• ${text.trim()}`;
-    } else if (text.trim().startsWith('- ')) {
-        return `• ${text.trim().slice(2)}`;
-    }
-    return text;
-}
-
-document.getElementById('convertBtn').addEventListener('click', function() {
+document.getElementById('convertBtn').addEventListener('click', function () {
     const delta = quill.getContents();
     let textOutput = '';
-    let currentLine = '';
-    let isInList = false;
 
-    delta.ops.forEach((op, index) => {
-        if (!op.insert) return;
+    delta.ops.forEach((op) => {
+        if (op.insert) {
+            let text = op.insert;
+            if (op.attributes) {
+                if (op.attributes.bold && op.attributes.italic) {
+                    text = toUnicodeVariant(text, 'bolditalic');
+                } else if (op.attributes.bold) {
+                    text = toUnicodeVariant(text, 'bold');
+                } else if (op.attributes.italic) {
+                    text = toUnicodeVariant(text, 'italic');
+                }
 
-        let text = op.insert;
-
-        // Handle newlines and lists
-        if (text === '\n') {
-            if (currentLine) {
-                textOutput += handleListItem(currentLine, op.attributes) + '\n';
-                currentLine = '';
+                if (op.attributes.underline) {
+                    text = '̲' + text + '̲';
+                }
+                if (op.attributes.strike) {
+                    text = '̶' + text + '̶';
+                }
+                if (op.attributes.background) {
+                    text = '█' + text + '█';
+                }
+                if (op.attributes.list === 'bullet') {
+                    text = '• ' + text;
+                }
+                if (op.attributes.list === 'ordered') {
+                    text = '1. ' + text;
+                }
+                if (op.attributes.size) {
+                    switch (op.attributes.size) {
+                        case 'small':
+                            text = '˙' + text + '˙';
+                            break;
+                        case 'large':
+                            text = '᚛' + text + '᚜';
+                            break;
+                        case 'huge':
+                            text = '⁅' + text + '⁆';
+                            break;
+                    }
+                }
             }
-            isInList = op.attributes && op.attributes.list;
-        } else {
-            // Format the text with styling
-            text = formatText(text, op.attributes);
-
-            // Add to current line
-            currentLine += text;
-
-            // If this is the last operation, add the current line
-            if (index === delta.ops.length - 1) {
-                textOutput += handleListItem(currentLine, op.attributes);
-            }
+            textOutput += text;
         }
     });
 
-    // Clean up the output and update the textarea
-    document.getElementById('output').value = textOutput
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line)
-        .join('\n');
+    document.getElementById('output').value = textOutput;
 });
