@@ -2,11 +2,16 @@ function toUnicodeVariant(str, variant) {
     // ... (keep the existing toUnicodeVariant function)
 }
 
+function convertToListOrText(text) {
+    return text.split('\n').map(line => {
+        line = line.trim();
+        return line.startsWith('- ') ? `• ${line.slice(2)}` : line;
+    }).join('\n');
+}
+
 document.getElementById('convertBtn').addEventListener('click', function () {
     const delta = quill.getContents();
     let textOutput = '';
-    let inList = false;
-    let listType = '';
 
     console.log('Starting conversion process');
 
@@ -14,19 +19,10 @@ document.getElementById('convertBtn').addEventListener('click', function () {
         console.log(`Processing op ${index}:`, op);
 
         if (op.insert) {
-            let text = op.insert;
-            let prefix = '';
+            let text = convertToListOrText(op.insert);
 
             if (op.attributes) {
                 console.log('Attributes:', op.attributes);
-
-                if (op.attributes.list === 'bullet') {
-                    prefix = '• ';
-                    console.log('Adding bullet prefix');
-                } else if (op.attributes.list === 'ordered') {
-                    prefix = '1. ';
-                    console.log('Adding numbered list prefix');
-                }
 
                 if (op.attributes.bold && op.attributes.italic) {
                     text = toUnicodeVariant(text, 'bolditalic');
@@ -42,11 +38,11 @@ document.getElementById('convertBtn').addEventListener('click', function () {
                 // Other formatting options...
             }
 
-            console.log(`Adding to output: "${prefix}${text}"`);
-            textOutput += prefix + text;
+            console.log(`Adding to output: "${text}"`);
+            textOutput += text;
         }
     });
 
     console.log('Final output:', textOutput);
-    document.getElementById('output').value = textOutput;
+    document.getElementById('output').value = textOutput.trim();
 });
