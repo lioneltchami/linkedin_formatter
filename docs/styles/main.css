@@ -1,0 +1,61 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+#input {
+    display: flex;
+    flex-direction: column;
+}
+
+#toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+#convertBtn {
+    width: auto;
+    margin-left: 20px;
+    padding: 0 10px;
+    background-color: #0077b5;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#output {
+    resize: none;
+    outline: none;
+    border: none;
+    padding: 20px;
+}
+
+.ql-toolbar button {
+    width: 28px;
+    height: 28px;
+    padding: 3px 5px;
+    margin: 2px;
+}
+
+.ql-toolbar .ql-picker-label {
+    padding: 0 4px;
+}
+
+.ql-toolbar .ql-picker-options {
+    padding: 4px 8px;
+}
+
+.ql-toolbar .ql-picker {
+    width: auto;
+}
