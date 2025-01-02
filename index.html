@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Rich Text to Unicode Converter</title>
+		<!-- Include Quill library -->
+		<link
+			href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				width: 100vw;
+				height: 100vh;
+
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				justify-items: stretch;
+				align-items: stretch;
+			}
+
+			#input {
+				display: flex;
+				flex-direction: column;
+			}
+
+			#convertBtn {
+				width: auto;
+				margin-left: 20px;
+
+				padding: 0 10px;
+				background-color: #0077b5;
+				color: white;
+				border: none;
+				cursor: pointer;
+			}
+
+			#output {
+				resize: none;
+
+				outline: none;
+				border: none;
+				padding: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Create the editor container -->
+		<div id="input">
+			<div id="toolbar">
+				<!-- Add buttons as you would before -->
+				<button class="ql-bold"></button>
+				<button class="ql-italic"></button>
+
+				<!-- But you can also add your own -->
+				<button id="convertBtn">Convert for LinkedIn</button>
+			</div>
+			<div id="editor"></div>
+		</div>
+		<textarea id="output" readonly>
+The converted text will appear here.</textarea
+		>
+
+		<script>
+			// Simplified and focused on bold, italic, and bolditalic variants
+			function toUnicodeVariant(str, variant) {
+				const offsets = {
+					bold: [
+						'𝗔'.codePointAt(0) - 'A'.codePointAt(0),
+						'𝗮'.codePointAt(0) - 'a'.codePointAt(0),
+					],
+					italic: [
+						'𝘈'.codePointAt(0) - 'A'.codePointAt(0),
+						'𝘢'.codePointAt(0) - 'a'.codePointAt(0),
+					],
+					bolditalic: [
+						'𝘼'.codePointAt(0) - 'A'.codePointAt(0),
+						'𝙖'.codePointAt(0) - 'a'.codePointAt(0),
+					],
+				};
+				const offset = offsets[variant];
+				const variantChars = [...str].map((char) => {
+					const code = char.charCodeAt(0);
+					// Uppercase letters
+					if (code >= 65 && code <= 90)
+						return String.fromCodePoint(offset[0] + code);
+					// Lowercase letters
+					else if (code >= 97 && code <= 122)
+						return String.fromCodePoint(offset[1] + code);
+					else return char; // Return the original character if it cannot be converted
+				});
+				return variantChars.join('');
+			}
+
+			// Initialize the Quill editor
+			var quill = new Quill('#editor', {
+				theme: 'snow',
+				formats: ['bold', 'italic'],
+				modules: {
+					toolbar: '#toolbar',
+				},
+				placeholder:
+					'You want to write and format your LinkedIn posts in Microsoft Word but loose all formatting when copying it over?\n\nWith this easy tool, you can copy paste your formatted texts from Word and convert them to LinkedIn compatible unicode texts.\n\nHow it works:\n1. Copy the text you want to convert from Word into the editor.\n2. Click the "Convert to LinkedIn" button.\n3. Copy the converted text from the output box and paste it into the LinkedIn post editor.\n\n\nLimitations: This tool only supports bold and italic formatting. Only ASCII characters are supported for bold/italic formatting, so avoid special characters such as ö, ü, ß, etc. in bold/italic texts. Links and other formatting cannot be pasted into the input editor, since they are not directly supported by LinkedIn.',
+			});
+
+			document
+				.getElementById('convertBtn')
+				.addEventListener('click', function () {
+					const delta = quill.getContents();
+					let textOutput = '';
+
+					delta.ops.forEach((op) => {
+						if (op.insert) {
+							let text = op.insert;
+							if (op.attributes) {
+								if (
+									op.attributes.bold &&
+									op.attributes.italic
+								) {
+									text = toUnicodeVariant(text, 'bolditalic');
+								} else if (op.attributes.bold) {
+									text = toUnicodeVariant(text, 'bold');
+								} else if (op.attributes.italic) {
+									text = toUnicodeVariant(text, 'italic');
+								}
+							}
+							textOutput += text;
+						}
+					});
+
+					document.getElementById('output').value = textOutput;
+				});
+		</script>
+	</body>
+</html>
