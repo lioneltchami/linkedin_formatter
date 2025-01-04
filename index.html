@@ -3,38 +3,32 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="description" content="A tool to format rich text for LinkedIn posts by converting styled text to Unicode." />
 	<title>Rich Text to Unicode Converter</title>
 	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
 	<link href="styles/main.css" rel="stylesheet" />
 </head>
 <body>
-<div id="container">
-	<div id="input">
-		<div id="toolbar" role="toolbar" aria-label="Formatting Toolbar">
-			<select class="ql-size" aria-label="Font Size">
-				<option value="small">Small</option>
-				<option selected>Normal</option>
-				<option value="large">Large</option>
-				<option value="huge">Huge</option>
-			</select>
-			<button class="ql-bold" aria-label="Bold"></button>
-			<button class="ql-italic" aria-label="Italic"></button>
-			<button class="ql-underline" aria-label="Underline"></button>
-			<button class="ql-strike" aria-label="Strikethrough"></button>
-			<button class="ql-list" value="ordered" aria-label="Ordered List"></button>
-			<button class="ql-list" value="bullet" aria-label="Bullet List"></button>
-			<select class="ql-color" aria-label="Text Color"></select>
-			<select class="ql-background" aria-label="Background Color"></select>
-			<button id="convertBtn" aria-label="Convert Text">Convert for LinkedIn</button>
-			<button id="clearBtn" aria-label="Clear Text">Clear</button>
-		</div>
-		<div id="editor" aria-label="Text Editor" placeholder="Write your formatted text here..."></div>
+<div id="input">
+	<div id="toolbar">
+		<select class="ql-size">
+			<option value="small">Small</option>
+			<option selected>Normal</option>
+			<option value="large">Large</option>
+			<option value="huge">Huge</option>
+		</select>
+		<button class="ql-bold"></button>
+		<button class="ql-italic"></button>
+		<button class="ql-underline"></button>
+		<button class="ql-strike"></button>
+		<button class="ql-list" value="ordered"></button>
+		<button class="ql-list" value="bullet"></button>
+		<select class="ql-color"></select>
+		<select class="ql-background"></select>
+		<button id="convertBtn">Convert for LinkedIn</button>
 	</div>
-	<div id="output-container">
-		<textarea id="output" readonly aria-label="Converted Text">The converted text will appear here.</textarea>
-	</div>
+	<div id="editor"></div>
 </div>
+<textarea id="output" readonly>The converted text will appear here.</textarea>
 
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="scripts/quill-config.js"></script>

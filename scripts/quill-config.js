@@ -1,53 +1,7 @@
-// Quill configuration object
-const quillConfig = {
+var quill = new Quill('#editor', {
     theme: 'snow',
     modules: {
         toolbar: '#toolbar'
     },
-    placeholder: 'Write your formatted text here...'
-};
-
-// Placeholder texts for different contexts
-const placeholderTexts = {
-    default: 'Write your formatted text here...',
-    linkedin: 'Formatting for LinkedIn posts made easy! Write your content here...'
-};
-
-// Initialize Quill editor
-let quill;
-
-// Function to initialize Quill
-function initQuill() {
-    quill = new Quill('#editor', quillConfig);
-}
-
-// Function to update placeholder based on context
-function updatePlaceholder(context) {
-    if (quill && quill.root) {
-        quill.root.dataset.placeholder = placeholderTexts[context] || placeholderTexts.default;
-    }
-}
-
-// Event listener for placeholder updates
-document.getElementById('toolbar').addEventListener('contextChange', function (event) {
-    updatePlaceholder(event.detail.context);
+    placeholder: 'You want to write and format your LinkedIn posts in Microsoft Word but lose all formatting when copying it over?\n\nWith this easy tool, you can copy paste your formatted texts from Word and convert them to LinkedIn compatible unicode texts.\n\nHow it works:\n1. Copy the text you want to convert from Word into the editor.\n2. Click the "Convert to LinkedIn" button.\n3. Copy the converted text from the output box and paste it into the LinkedIn post editor.\n\n\nLimitations: Some advanced formatting may not be fully supported in LinkedIn.',
 });
-
-// Lazy-load Quill resources if needed
-if (window.Quill) {
-    initQuill();
-} else {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.quilljs.com/1.3.6/quill.js';
-    script.onload = initQuill;
-    script.onerror = function() {
-        console.error('Failed to load Quill library');
-        // Fallback to a basic textarea if Quill fails to load
-        const editor = document.getElementById('editor');
-        editor.innerHTML = '<textarea placeholder="Write your text here..."></textarea>';
-    };
-    document.body.appendChild(script);
-}
-
-// Export the quill instance and updatePlaceholder function
-export { quill, updatePlaceholder };
