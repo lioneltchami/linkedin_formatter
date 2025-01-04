@@ -1,3 +1,16 @@
+/* Global Styles */
+:root {
+    --primary-color: #0077b5;
+    --primary-hover-color: #005582;
+    --font-family: Arial, sans-serif;
+    --button-padding: 10px;
+    --editor-padding: 15px;
+    --output-border: 1px solid #ccc;
+    --background-light: #f9f9f9;
+    --background-hover: #e0e0e0;
+    --transition-speed: 0.3s;
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -8,44 +21,99 @@ body {
     width: 100vw;
     height: 100vh;
     display: grid;
+    grid-template-rows: auto 1fr;
     grid-template-columns: 1fr 1fr;
-    justify-items: stretch;
-    align-items: stretch;
+    gap: 10px;
+    font-family: var(--font-family);
+    overflow-x: hidden;
+}
+
+#container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    gap: 10px;
 }
 
 #input {
     display: flex;
     flex-direction: column;
+    border-inline-end: var(--output-border);
+    padding: var(--editor-padding);
 }
 
 #toolbar {
     display: flex;
     flex-wrap: wrap;
+    gap: 5px;
     padding: 5px;
 }
 
-#convertBtn {
-    width: auto;
-    margin-left: 20px;
-    padding: 0 10px;
-    background-color: #0077b5;
+#convertBtn, #clearBtn {
+    padding: var(--button-padding);
+    background-color: var(--primary-color);
     color: white;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
+    transition: background-color var(--transition-speed) ease;
+}
+
+#convertBtn:hover, #clearBtn:hover {
+    background-color: var(--primary-hover-color);
+}
+
+#convertBtn:focus, #clearBtn:focus, .ql-toolbar button:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+#output-container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--editor-padding);
+}
+
+#editor {
+    flex-grow: 1;
+    border: var(--output-border);
+    padding: var(--editor-padding);
+    overflow-y: auto;
+    min-height: 300px;
 }
 
 #output {
     resize: none;
     outline: none;
-    border: none;
-    padding: 20px;
+    border: var(--output-border);
+    padding: var(--editor-padding);
+    width: 100%;
+    height: calc(100% - 20px);
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: var(--background-light);
 }
 
 .ql-toolbar button {
     width: 28px;
     height: 28px;
-    padding: 3px 5px;
+    padding: 3px;
     margin: 2px;
+    border-radius: 4px;
+    border: none;
+    background-color: var(--background-light);
+    cursor: pointer;
+    transition: background-color var(--transition-speed) ease;
+}
+
+.ql-toolbar button:hover {
+    background-color: var(--background-hover);
+}
+
+.ql-toolbar .ql-picker {
+    width: auto;
+    border: none;
 }
 
 .ql-toolbar .ql-picker-label {
@@ -56,6 +124,19 @@ body {
     padding: 4px 8px;
 }
 
-.ql-toolbar .ql-picker {
-    width: auto;
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        grid-template-columns: 1fr;
+    }
+
+    #container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    #input {
+        border-inline-end: none;
+        border-block-end: var(--output-border);
+    }
 }
