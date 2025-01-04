@@ -59,24 +59,3 @@ body {
 .ql-toolbar .ql-picker {
     width: auto;
 }
-
-#output {
-    position: relative;
-}
-
-#copyBtn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 5px 10px;
-    background-color: #0077b5;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-#copyBtn:hover {
-    background-color: #005fa3;
-}
-
