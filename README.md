@@ -13,3 +13,5 @@ This web tool is designed to help you preserve your rich text formatting when po
 - Currently supports **bold** and *italic* formatted text only.
 - Only ASCII characters are supported for bold/italic formatting. Avoid using special characters such as ö, ü, ß, etc., in bold/italic texts.
 - Links and other non-text formatting cannot be pasted into the input editor, as they are not directly supported by LinkedIn.
+
+## Suggestions
